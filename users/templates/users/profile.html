@@ -1,13 +1,32 @@
 {%extends "blog/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div class = "content-section">
-    <div class = "media">
-        <img class="rounded-circle mr-3" src="{% if user.profile.img %}{{ user.profile.img.url }}{% else %}https://api.dicebear.com/7.x/pixel-art/svg?seed={{ user.username }}{% endif %}" alt="Profile Image" style="width: 100px; height: 100px;">
-        <div class = "media-body">
-            <h2 class = "account-heading">{{user.username}}</h2>
-            <p class = "text-secondary">{{user.email}}</p>
+    <div class = "content-section">
+        <div class = "media">
+            <img class="rounded-circle mr-3"
+             src="{% if user.profile.img.name == 'default.jpg' %}
+                      https://api.dicebear.com/7.x/pixel-art/svg?seed={{ user.username }}
+                  {% else %}
+                      {{ user.profile.img.url }}
+                  {% endif %}"
+             alt="Profile Image"
+             style="width: 100px; height: 100px;">
+            <div class = "media-body">
+                <h2 class = "account-heading">{{user.username}}</h2>
+                <p class = "text-secondary">{{user.email}}</p>
+            </div>
         </div>
+        <form method = "POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class = "form-group">
+                <legend class = "border=bottom mb-4">Profile Info</legend>
+                {{ u_form|crispy }}
+                {{ p_form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class = "btn btn-outline-info" type ="submit">Update</button>
+            </div>
+        </form>
     </div>
-</div>
-{% endblock content %} 
+{% endblock content %}
+
