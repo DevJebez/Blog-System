@@ -1,0 +1,17 @@
+{%extends "blog/base.html" %}
+{% block content %}
+    <article class="media content-section">
+    <div class="media-body">
+        <img class="rounded-circle mr-3" 
+             src="{% if object.user.profile.img %}{{ object.user.profile.img.url }}{% else %}https://api.dicebear.com/7.x/adventurer-neutral/svg?seed={{ object.author }}{% endif %}"
+             alt="Author Image"
+        style="width: 50px; height: 50px;">
+        <div class="article-metadata">
+            <a class="mr-2" href="#">{{ object.author }}</a>
+            <small class="text-muted">{{ object.date_posted|date:"F d, Y " }}</small>
+        </div>
+        <h2 class="article-title">{{ object.title }}</h2>
+        <p class="article-  content">{{ object.content }}</p>
+    </div>
+    </article> 
+{% endblock content %}

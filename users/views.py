@@ -5,6 +5,7 @@ from .forms import UserRegisterForm
 from django.contrib.auth.decorators import login_required #ensures login authentication to acess the profile page
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 # Create your views here.
+
 def register(request):
     if request.method == 'POST': # the data is sent via POST HTTP request
         form = UserRegisterForm(request.POST)

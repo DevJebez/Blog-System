@@ -4,12 +4,8 @@
     <div class = "content-section">
         <div class = "media">
             <img class="rounded-circle mr-3"
-             src="{% if user.profile.img.name == 'default.jpg' %}
-                      https://api.dicebear.com/7.x/pixel-art/svg?seed={{ user.username }}
-                  {% else %}
-                      {{ user.profile.img.url }}
-                  {% endif %}"
-             alt="Profile Image"
+            src="{% if user.profile.img %}{{ user.profile.img.url }}{% else %}https://api.dicebear.com/7.x/adventurer-neutral/svg?seed={{ user.username }}{% endif %}"
+             alt="Author Image"
              style="width: 100px; height: 100px;">
             <div class = "media-body">
                 <h2 class = "account-heading">{{user.username}}</h2>
