@@ -3,10 +3,10 @@ from django.http import HttpResponse
 from .models import Post
 from django.contrib import messages
 from django.views.generic import (
-    ListView, DetailView,CreateView
+    ListView, DetailView,CreateView, UpdateView, DeleteView
 )
-# this gives the login functionality to the class , we import for PostCreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+# this gives the "login required" functionality to the class , we import it for PostCreateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
 '''
@@ -33,7 +33,7 @@ posts = [
 
 '''
 '''
-# These are function based views that render the HTML templatess
+# These are functions based views that render the HTML templatess
 def home(request):
     context = {
         'posts': Post.objects.all() # here the Post model is called as posts
@@ -58,6 +58,28 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user 
         return super().form_valid(form)
+    
+class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin, UpdateView):
+    model = Post 
+    fields = ['title','content']
+
+    # we override form_valid method 
+    def form_valid(self, form):
+        form.instance.author = self.request.user 
+        return super().form_valid(form)
+    def test_func(self):
+        post = self.get_object() # a method to get the post object 
+        if self.request.user == post.author:
+            return True
+        return False
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    success_url = '/'
+    def test_func(self):
+        post = self.get_object() # a method to get the post object 
+        if self.request.user == post.author:
+            return True
+        return False
 
 def about(request):
     return render(request,'blog/about.html')
