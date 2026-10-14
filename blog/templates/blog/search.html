@@ -1,0 +1,20 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    <h1 class="mb-3">Search{% if query %}: "{{ query }}"{% endif %}</h1>
+    {% for post, score in results %}
+        <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                <small class="text-muted">{{ post.date_posted|date:"F d, Y " }}</small>
+                {% if score %}<span class="badge badge-secondary float-right">{% widthratio score 1 100 %}% match</span>{% endif %}
+            </div>
+            <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content|truncatewords:40 }}</p>
+            {% include "blog/_tags.html" with post=post %}
+        </div>
+        </article>
+    {% empty %}
+        <p class="text-muted">{% if query %}No posts matched your search.{% else %}Type something in the search box above.{% endif %}</p>
+    {% endfor %}
+{% endblock content %}

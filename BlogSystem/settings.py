@@ -131,3 +131,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'blog-home' # this redirects login page to home page
 
 LOGIN_URL = 'login' #this is the name given to the url pattern . By default django uses accounts/login
+
+# Password reset emails are printed to the console in development
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

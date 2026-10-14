@@ -3,22 +3,63 @@
     <article class="media content-section">
     <div class="media-body">
         <img class="rounded-circle mr-3" 
-             src="{% if object.user.profile.img %}{{ object.user.profile.img.url }}{% else %}https://api.dicebear.com/7.x/adventurer-neutral/svg?seed={{ object.author }}{% endif %}"
+             src="{% if object.author.profile.img %}{{ object.author.profile.img.url }}{% else %}https://api.dicebear.com/7.x/adventurer-neutral/svg?seed={{ object.author.username }}{% endif %}"
              alt="Author Image"
         style="width: 50px; height: 50px;">
         <div class="article-metadata">
-            <a class="mr-2" href="#">{{ object.author }}</a>
+            <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
             <small class="text-muted">{{ object.date_posted|date:"F d, Y " }}</small>
             {% if object.author == user %}
             <div>
                 <a class = "btn btn-secondary btn-sm mt-1 mb-1" href = "{% url 'post-update' object.id %}">Update</a>
                 <a class = "btn btn-danger btn-sm mt-1 mb-1" href = "{% url 'post-delete' object.id %}">Delete</a>
-            {% endif %}
             </div>
+            {% endif %}
         </div>
         <h2 class="article-title">{{ object.title }}</h2>
-        <p class="article-  content">{{ object.content }}</p>
-
+        {% if object.summary %}
+        <div class="alert alert-light border"><strong>TL;DR</strong> <span class="article-content">{{ object.summary }}</span></div>
+        {% endif %}
+        <p class="article-content">{{ object.content }}</p>
+        {% include "blog/_tags.html" with post=object %}
     </div>
     </article> 
+    <div class="content-section">
+        <h4>Comments ({{ comments|length }})</h4>
+        {% for comment in comments %}
+            <div class="border-bottom py-2">
+                <a href="{% url 'user-posts' comment.author.username %}">{{ comment.author }}</a>
+                <small class="text-muted">{{ comment.date_posted|date:"F d, Y" }}</small>
+                {% if not comment.is_approved %}<span class="badge badge-warning">Held for review - only you can see this</span>{% endif %}
+                {% if user == comment.author or user == object.author %}
+                <form method="post" action="{% url 'comment-delete' comment.id %}" class="d-inline float-right">
+                    {% csrf_token %}<button class="btn btn-link btn-sm text-danger p-0" type="submit">Delete</button>
+                </form>
+                {% endif %}
+                <p class="mb-0">{{ comment.content|linebreaksbr }}</p>
+            </div>
+        {% empty %}
+            <p class="text-muted">No comments yet.</p>
+        {% endfor %}
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'comment-create' object.id %}" class="mt-3">
+            {% csrf_token %}
+            <textarea class="form-control mb-2" name="content" rows="3" maxlength="1000" placeholder="Write a comment..." required></textarea>
+            <button class="btn btn-outline-info" type="submit">Comment</button>
+        </form>
+        {% else %}
+            <p class="mt-3"><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to comment.</p>
+        {% endif %}
+    </div>
+    {% if related_posts %}
+    <div class="content-section">
+        <h4>You might also like</h4>
+        <ul class="list-group list-group-flush">
+        {% for p in related_posts %}
+            <li class="list-group-item"><a href="{% url 'post-detail' p.id %}">{{ p.title }}</a>
+                <small class="text-muted">by {{ p.author }}</small></li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 {% endblock content %}

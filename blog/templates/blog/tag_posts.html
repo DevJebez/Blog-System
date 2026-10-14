@@ -1,0 +1,5 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    <h1 class="mb-3">#{{ tag.name }} ({{ page_obj.paginator.count }})</h1>
+    {% include "blog/_post_list.html" %}
+{% endblock content %}

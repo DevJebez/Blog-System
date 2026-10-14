@@ -1,0 +1,3 @@
+{% for tag in post.tags.all %}
+    <a class="badge badge-info" href="{% url 'tag-posts' tag.name %}">#{{ tag.name }}</a>
+{% endfor %}

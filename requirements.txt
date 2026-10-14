@@ -1,0 +1,7 @@
+Django>=5.2,<5.3
+django-crispy-forms
+crispy-bootstrap4
+Pillow
+scikit-learn
+sentence-transformers
+transformers
